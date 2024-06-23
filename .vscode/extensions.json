@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "onecentlin.laravel-extension-pack",
+        "bmewburn.vscode-intelephense-client",
+        "xdebug.php-debug",
+        "damms005.devdb"
+    ]
+}

@@ -1,0 +1,16 @@
+services:
+    fillapost:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: fillapost
+        image: akrista/fillapost:latest
+        environment:
+            # - SERVER_NAME=http://mysite.com
+            # - CONTAINER_MODE=http
+            # - WITH_HORIZON=true
+            - WITH_SCHEDULER=true
+        env_file:
+            - .env
+        ports:
+            - 8000:8000

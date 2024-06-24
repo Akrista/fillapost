@@ -7,7 +7,8 @@ use App\Models\Post;
 use App\Models\ServiceAccount;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
+// use Filament\Forms\Components\Textarea;
+use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
@@ -26,26 +27,19 @@ class PostResource extends Resource
     protected static ?string $navigationLabel = 'Posts';
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
     protected static ?string $navigationGroup = 'Content';
+    protected static ?int $navigationSort = 0;
+    // protected static ?string $recordTitleAttribute = 'content';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Select::make('serviceAccount.name')
-                    ->label('Service Account')
-                    ->options(fn () => ServiceAccount::all()->pluck('type', 'name')->toArray())
-                    ->required()
-                    ->rules('required', 'exists:service_accounts,name'),
                 TextInput::make('title')
                     ->label('Title')
                     ->required()
                     ->placeholder('Enter the title of the post')
                     ->rules('string', 'max:255'),
-                Textarea::make('content')
-                    ->label('Content')
-                    ->required()
-                    ->placeholder('Enter the content of the post')
-                    ->rules('required', 'string', 'max:3000'),
+                TinyEditor::make('content'),
                 DatePicker::make('scheduled_at')
                     ->label('Published At')
                     ->required()
@@ -76,13 +70,13 @@ class PostResource extends Resource
                     ->lineClamp(3)
                     ->searchable()
                     ->sortable(),
-                IconColumn::make('serviceAccount.type')
-                    ->icon(fn (string $state): string => match ($state) {
-                        'linkedin' => 'fab-linkedin'
-                    })
-                    ->label('Account')
-                    ->searchable()
-                    ->sortable(),
+                // IconColumn::make('socialMediaService.type')
+                //     ->icon(fn (string $state): string => match ($state) {
+                //         'linkedin' => 'fab-linkedin'
+                //     })
+                //     ->label('Account')
+                //     ->searchable()
+                //     ->sortable(),
                 TextColumn::make('user.name')
                     ->label('Author')
                     ->searchable()

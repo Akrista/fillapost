@@ -2,12 +2,20 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Dashboard;
+use App\Filament\Pages\HealthCheckResults;
+use App\Filament\Resources\PostResource;
+use App\Filament\Resources\ServiceAccountResource;
+use App\Filament\Resources\SocialMediaServiceResource;
+use Awcodes\Curator\CuratorPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
+use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
@@ -26,20 +34,27 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('/')
+            ->id('fillapost')
             ->path('/')
             ->login()
             ->colors([
                 'primary' => Color::Red,
             ])
+            ->viteTheme('resources/css/filament/fillapost/theme.css')
             // ->topNavigation()
             ->breadcrumbs(false)
             // ->brandName('Fillapost')
             ->favicon(asset('favicon.svg'))
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            // ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->resources([
+                PostResource::class,
+                SocialMediaServiceResource::class,
+                ServiceAccountResource::class,
+                config('filament-logger.activity_resource'),
+            ])
+            // ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-                // Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->navigationItems([
                 NavigationItem::make('Create Post')
@@ -54,7 +69,7 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Settings')
                     ->collapsible(false)
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
+            // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -73,6 +88,21 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])->plugins([
+                FilamentSpatieLaravelHealthPlugin::make()->usingPage(HealthCheckResults::class),
+                FilamentApexChartsPlugin::make(),
+                SpotlightPlugin::make(),
+                CuratorPlugin::make()
+                // ->label('Media')
+                // ->pluralLabel('Media')
+                // ->navigationIcon('heroicon-o-photo')
+                // ->navigationGroup('Content')
+                // ->navigationSort(2)
+                // ->defaultListView('grid')
+                // ->navigationCountBadge()
+                // ->registerNavigation(false)
+                // ->defaultListView('grid' || 'list')
+                // ->resource(CustomMediaResource::class)
             ]);
     }
 }

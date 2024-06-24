@@ -2,43 +2,39 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ServiceAccountResource\Pages;
-use App\Filament\Resources\ServiceAccountResource\RelationManagers;
-use App\Models\ServiceAccount;
+use App\Filament\Resources\SocialMediaServiceResource\Pages;
+use App\Filament\Resources\SocialMediaServiceResource\RelationManagers;
+use App\Models\SocialMediaService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ServiceAccountResource extends Resource
+class SocialMediaServiceResource extends Resource
 {
-    protected static ?string $model = ServiceAccount::class;
+    protected static ?string $model = SocialMediaService::class;
 
-    protected static ?string $navigationLabel = 'Accounts';
-    protected static ?string $navigationIcon = 'heroicon-o-cube';
+    protected static ?string $navigationLabel = 'Services';
+    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
     protected static ?string $navigationGroup = 'Settings';
-    protected static ?int $navigationSort = 0;
-    // protected static ?string $recordTitleAttribute = 'name';
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                // Forms\Components\Select::make('type')
-                //     ->label('Type')
-                //     ->options([
-                //         'linkedin' => 'LinkedIn',
-                //     ])
-                //     ->required()
-                //     ->rules('required', 'string'),
-                // Forms\Components\TextInput::make('token')
-                //     ->label('Token')
-                //     ->required()
-                //     ->rules('required', 'string'),
+                Forms\Components\TextInput::make('type')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('token')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Select::make('user_id')
+                    ->relationship('user', 'name')
+                    ->required(),
             ]);
     }
 
@@ -46,13 +42,13 @@ class ServiceAccountResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('type')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('socialMediaService.type')
+                Tables\Columns\TextColumn::make('token')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
-                ImageColumn::make('avatar')
-                    ->circular(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -86,10 +82,10 @@ class ServiceAccountResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListServiceAccounts::route('/'),
-            // 'create' => Pages\CreateServiceAccount::route('/create'),
-            'view' => Pages\ViewServiceAccount::route('/{record}'),
-            'edit' => Pages\EditServiceAccount::route('/{record}/edit'),
+            'index' => Pages\ListSocialMediaServices::route('/'),
+            'create' => Pages\CreateSocialMediaService::route('/create'),
+            'view' => Pages\ViewSocialMediaService::route('/{record}'),
+            'edit' => Pages\EditSocialMediaService::route('/{record}/edit'),
         ];
     }
 }

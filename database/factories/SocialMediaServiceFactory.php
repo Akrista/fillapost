@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
  */
-class ServiceAccountFactory extends Factory
+class SocialMediaServiceFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,10 +18,9 @@ class ServiceAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'social_media_service_id' => 1,
-            'name' => $this->faker->name,
-            'avatar' => $this->faker->imageUrl(),
-            'internal_id' => $this->faker->uuid,
+            'type' => 'linkedin',
+            'token' => Hash::make('password'),
+            'user_id' => 1
         ];
     }
 }

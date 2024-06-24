@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('service_accounts', function (Blueprint $table) {
             $table->id()->comment('The primary key of the service accounts table');
-            $table->enum('type', ['linkedin'])->comment('The type of the service account');
-            $table->string('token')->comment('The token of the service account');
-            $table->unsignedBigInteger('user_id')->comment('The user who created the post');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->unsignedBigInteger('social_media_service_id')->comment('The social media service that the account belongs to');
+            $table->foreign('social_media_service_id')->references('id')->on('social_media_services')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('name')->comment('The name of the service account');
+            $table->string('avatar')->nullable()->comment('The avatar of the service account');
+            $table->string('internal_id')->comment('The internal ID of the service account');
             $table->timestamps();
         });
     }

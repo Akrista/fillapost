@@ -52,8 +52,8 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
-    public function serviceAccounts(): HasMany
+    public function socialMediaServices(): HasMany
     {
-        return $this->hasMany(ServiceAccount::class);
+        return $this->hasMany(SocialMediaService::class);
     }
 }

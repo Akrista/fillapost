@@ -2,20 +2,20 @@
 
 namespace App\Models;
 
+use AnourValar\EloquentSerialize\Service;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ServiceAccount extends Model
+class SocialMediaService extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'social_media_service_id',
-        'name',
-        'avatar',
-        'internal_id',
+        'type',
+        'token',
+        'user_id'
     ];
 
     public function user(): BelongsTo
@@ -23,13 +23,8 @@ class ServiceAccount extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function socialMediaService(): BelongsTo
+    public function serviceAccount(): HasMany
     {
-        return $this->belongsTo(SocialMediaService::class);
-    }
-
-    public function posts(): HasMany
-    {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(ServiceAccount::class);
     }
 }

@@ -6,28 +6,28 @@ ARG COMPOSER_VERSION=latest
 # Build frontend assets with NPM
 ###########################################
 
-ARG NODE_VERSION=20-alpine
+# ARG NODE_VERSION=20-alpine
 
-FROM node:${NODE_VERSION} AS build
+# FROM node:${NODE_VERSION} AS build
 
-ENV ROOT=/var/www/html
+# ENV ROOT=/var/www/html
 
-WORKDIR ${ROOT}
+# WORKDIR ${ROOT}
 
-RUN npm config set update-notifier false && npm set progress=false
+# RUN npm config set update-notifier false && npm set progress=false
 
-COPY --link package*.json ./
+# COPY --link package*.json ./
 
-RUN if [ -f $ROOT/package-lock.json ]; \
-    then \
-    npm ci --loglevel=error --no-audit; \
-    else \
-    npm install --loglevel=error --no-audit; \
-    fi
+# RUN if [ -f $ROOT/package-lock.json ]; \
+#     then \
+#     npm ci --loglevel=error --no-audit; \
+#     else \
+#     npm install --loglevel=error --no-audit; \
+#     fi
 
-COPY --link . .
+# COPY --link . .
 
-RUN npm run build
+# RUN npm run build
 
 ###########################################
 
@@ -68,6 +68,8 @@ RUN apk update; \
     apk add --no-cache \
     curl \
     wget \
+    nodejs \
+    npm \
     # nano \
     # ncdu \
     procps \
@@ -135,7 +137,24 @@ RUN composer install \
     --audit
 
 COPY --link --chown=${USER}:${USER} . .
-COPY --link --chown=${USER}:${USER} --from=build ${ROOT}/public public
+
+RUN npm config set update-notifier false && npm set progress=false
+
+COPY --link package*.json ./
+
+RUN if [ -f $ROOT/package-lock.json ]; \
+    then \
+    npm ci --loglevel=error --no-audit; \
+    else \
+    npm install --loglevel=error --no-audit; \
+    fi
+
+COPY --link --chown=${USER}:${USER} . .
+
+RUN npm run build
+
+COPY --link --chown=${USER}:${USER} . .
+# COPY --link --chown=${USER}:${USER} --from=build ${ROOT}/public public
 
 RUN mkdir -p \
     storage/framework/sessions \

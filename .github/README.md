@@ -2,16 +2,26 @@
 
 Fill-A-Post is a social media management tool that allows you to schedule posts to (Linkedin) multiple social media platforms.
 
+## Star History
+
+<a href="https://star-history.com/#Akrista/fillapost&Timeline">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=Akrista/fillapost&type=Timeline&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=Akrista/fillapost&type=Timeline" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=Akrista/fillapost&type=Timeline" />
+ </picture>
+</a>
+
 ## Installation
 
 ### Docker Compose
 
 -   Build the Image
-    ```bash
+    ```console
     docker-compose build
     ```
 -   Run the docker-compose
-    ```bash
+    ```console
     docker-compose up -d --force-recreate
     ```
 
@@ -33,12 +43,37 @@ Fill-A-Post is a social media management tool that allows you to schedule posts 
 -   NPM
 -   Docker (Optional)
 
-Note: For Windows Users you could use directly Laravel Herd
+_Note: For Windows Users you could use directly [Laravel Herd](https://herd.laravel.com/windows)_
 
 #### Steps
 
 1. Pull Source
-2.
+    ```console
+    git clone https://github.com/Akrista/fillapost
+    cd fillapost
+    ```
+2. Install Dependencies
+    ```console
+    composer install
+    npm install
+    ```
+3. Setup Environment
+    ```console
+    cp .env.example .env
+    php artisan key:generate
+    ```
+4. Run the migrations
+    ```console
+    php artisan migrate --seed
+    ```
+5. Start the development server
+    ```console
+    php artisan serve
+    ```
+6. Visit the site at [http://localhost:8000](http://localhost:8000)
+7. Login with the default credentials
+    - Email: `demo@fillapost.com`
+    - Password: `demo`
 
 ## TODO
 

@@ -9,11 +9,12 @@ use Filament\Resources\Pages\ListRecords;
 class ListSocialMediaServices extends ListRecords
 {
     protected static string $resource = SocialMediaServiceResource::class;
+    protected ?string $heading = 'Services';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Register Service'),
         ];
     }
 }

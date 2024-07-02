@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Post>
  */
-class ServiceAccountFactory extends Factory
+class SocialMediaTypeFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,10 +17,7 @@ class ServiceAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'social_media_service_id' => 1,
-            'name' => $this->faker->name,
-            'avatar' => $this->faker->imageUrl(),
-            'internal_id' => $this->faker->uuid,
+            'type' => array_rand(['linkedin', 'wakatime', 'steam']),
         ];
     }
 }

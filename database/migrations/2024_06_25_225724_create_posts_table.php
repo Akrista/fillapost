@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id()->comment('The primary key of the posts table');
-            $table->string('title')->comment('The title of the post');
+            $table->string('title')->nullable()->comment('The title of the post');
             $table->text('content')->comment('The content of the post');
             $table->enum('status', ['draft', 'scheduled', 'published', 'failed'])->default('draft')->comment('The status of the post');
             $table->boolean('draft')->default(true)->comment('The post is a draft');
+            $table->string('internal_id')->nullable()->comment('The internal ID of the post');
             $table->timestamp('scheduled_at')->nullable()->comment('The time the post is scheduled');
             $table->date('published_at')->nullable()->comment('The time the post was published');
             $table->unsignedBigInteger('user_id')->comment('The user who created the post');

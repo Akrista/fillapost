@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('social_media_service_id')->references('id')->on('social_media_services')->onDelete('cascade')->onUpdate('cascade');
             $table->string('name')->comment('The name of the service account');
             $table->string('avatar')->nullable()->comment('The avatar of the service account');
-            $table->string('internal_id')->comment('The internal ID of the service account');
+            $table->string('internal_id')->nullable()->comment('The internal ID of the service account');
             $table->timestamps();
         });
     }

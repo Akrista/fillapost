@@ -41,18 +41,15 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Red,
             ])
             ->viteTheme('resources/css/filament/fillapost/theme.css')
-            // ->topNavigation()
             ->breadcrumbs(false)
-            // ->brandName('Fillapost')
+            ->brandName('Fillapost')
             ->favicon(asset('favicon.svg'))
-            // ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([
                 PostResource::class,
                 SocialMediaServiceResource::class,
                 ServiceAccountResource::class,
                 config('filament-logger.activity_resource'),
             ])
-            // ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Dashboard::class,
             ])
@@ -69,7 +66,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Settings')
                     ->collapsible(false)
             ])
-            // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -93,16 +89,6 @@ class AdminPanelProvider extends PanelProvider
                 FilamentApexChartsPlugin::make(),
                 SpotlightPlugin::make(),
                 CuratorPlugin::make()
-                // ->label('Media')
-                // ->pluralLabel('Media')
-                // ->navigationIcon('heroicon-o-photo')
-                // ->navigationGroup('Content')
-                // ->navigationSort(2)
-                // ->defaultListView('grid')
-                // ->navigationCountBadge()
-                // ->registerNavigation(false)
-                // ->defaultListView('grid' || 'list')
-                // ->resource(CustomMediaResource::class)
             ]);
     }
 }

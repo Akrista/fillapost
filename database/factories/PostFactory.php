@@ -20,6 +20,7 @@ class PostFactory extends Factory
             'title' => $this->faker->sentence(),
             'content' => $this->faker->paragraphs(3, true),
             'status' => $this->faker->randomElement(['draft', 'scheduled', 'published', 'failed']),
+            'internal_id' => $this->faker->uuid,
             'scheduled_at' => $this->faker->dateTimeBetween('now', '+1 year'),
             'published_at' => $this->faker->dateTimeBetween('-1 year', 'now'),
             'user_id' => 1,

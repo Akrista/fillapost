@@ -91,6 +91,7 @@ Note: For Windows Users you could use directly Laravel Herd
     -   [ ] Service Accounts
         -   [ ] Service Acounts must be created when the Social Media Service is created
         -   [ ] List accounts relevant to the Service Provider
+        -   [ ] Locally save avatars related to accounts
     -   [ ] Users
         -   [ ] Access Control
             -   [ ] Roles

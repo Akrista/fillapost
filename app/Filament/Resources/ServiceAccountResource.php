@@ -3,16 +3,16 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServiceAccountResource\Pages;
-use App\Filament\Resources\ServiceAccountResource\RelationManagers;
 use App\Models\ServiceAccount;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ServiceAccountResource extends Resource
 {
@@ -22,56 +22,59 @@ class ServiceAccountResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-cube';
     protected static ?string $navigationGroup = 'Settings';
     protected static ?int $navigationSort = 0;
-    // protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                // Forms\Components\Select::make('type')
-                //     ->label('Type')
-                //     ->options([
-                //         'linkedin' => 'LinkedIn',
-                //     ])
-                //     ->required()
-                //     ->rules('required', 'string'),
-                // Forms\Components\TextInput::make('token')
-                //     ->label('Token')
-                //     ->required()
-                //     ->rules('required', 'string'),
-            ]);
+            ->schema([]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
+                    ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('socialMediaService.type')
-                    ->numeric()
+                TextColumn::make('socialMediaService.socialMediaType.type')
+                    ->label('Service Type')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'linkedin' => 'fab-linkedin',
+                        'steam' => 'fab-steam',
+                        'wakatime' => 'fab-wakatime',
+                    })
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
+                    ->searchable()
                     ->sortable(),
+                TextColumn::make('socialMediaService.name')
+                    ->label('Service Name')
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
+                    ->sortable()
+                    ->searchable(),
                 ImageColumn::make('avatar')
                     ->circular(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                ViewAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }

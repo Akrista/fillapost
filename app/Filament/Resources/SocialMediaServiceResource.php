@@ -3,15 +3,23 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SocialMediaServiceResource\Pages;
-use App\Filament\Resources\SocialMediaServiceResource\RelationManagers;
 use App\Models\SocialMediaService;
-use Filament\Forms;
+use App\Models\SocialMediaType;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\Facades\Http;
 
 class SocialMediaServiceResource extends Resource
 {
@@ -26,15 +34,27 @@ class SocialMediaServiceResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('type')
+                Select::make('social_media_type_id')
+                    ->label('Service')
+                    ->options(
+                        SocialMediaType::all()->mapWithKeys(fn ($socialMediaType) => [
+                            $socialMediaType->id => ucfirst($socialMediaType->type),
+                        ])->toArray()
+                    )
+                    ->required()
+                    ->rules('exists:social_media_types,id')
+                    ->live(),
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('token')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
+                TextInput::make('token')
                     ->required(),
+                TextInput::make('client_id')
+                    ->hidden(fn (Get $get) => $get('social_media_type_id') !== '1')
+                    ->required(fn (Get $get) => $get('social_media_type_id') === '1'),
+                TextInput::make('client_secret')
+                    ->hidden(fn (Get $get) => $get('social_media_type_id') !== '1')
+                    ->required(fn (Get $get) => $get('social_media_type_id') === '1'),
             ]);
     }
 
@@ -42,32 +62,54 @@ class SocialMediaServiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('type')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('token')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
+                TextColumn::make('socialMediaType.type')
+                    ->label('Service')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'linkedin' => 'fab-linkedin',
+                        'steam' => 'fab-steam',
+                        'wakatime' => 'fab-wakatime',
+                    })
+                    ->searchable()
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('name')
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('user.name')
+                    ->formatStateUsing(fn ($state) => ucfirst($state))
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Action::make('refresh')->action(
+                    fn (SocialMediaService $record) => self::refreshAccounts($record)
+                )
+                    ->label('Refresh Accounts')
+                    ->button()
+                    ->icon('heroicon-m-arrow-path'),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -87,5 +129,20 @@ class SocialMediaServiceResource extends Resource
             'view' => Pages\ViewSocialMediaService::route('/{record}'),
             'edit' => Pages\EditSocialMediaService::route('/{record}/edit'),
         ];
+    }
+
+    public static function refreshAccounts(SocialMediaService $record)
+    {
+        if ($record->socialMediaType->type === 'linkedin') {
+            $response = Http::withToken($record->token)
+                ->get('https://api.linkedin.com/v2/userinfo')->json();
+            $record->serviceAccount()->updateOrCreate(
+                ['internal_id' => $response['sub'],],
+                [
+                    'name' => $response['name'],
+                    'avatar' => $response['picture'],
+                ]
+            );
+        }
     }
 }

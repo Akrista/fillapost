@@ -5,20 +5,21 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PostResource\Pages;
 use App\Models\Post;
 use App\Models\ServiceAccount;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
-// use Filament\Forms\Components\Textarea;
-use Mohamedsabil83\FilamentFormsTinyeditor\Components\TinyEditor;
-use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Columns\IconColumn;
 
 class PostResource extends Resource
 {
@@ -28,22 +29,59 @@ class PostResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
     protected static ?string $navigationGroup = 'Content';
     protected static ?int $navigationSort = 0;
-    // protected static ?string $recordTitleAttribute = 'content';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Select::make('service_account_id')
+                    ->label('Service Account')
+                    ->options(fn () =>
+                    ServiceAccount::all()->mapWithKeys(fn ($serviceAccount) => [
+                        $serviceAccount->id => $serviceAccount->name,
+                    ])->toArray())
+                    ->rules('exists:service_accounts,id')
+                    ->autofocus()
+                    ->live()
+                    ->required(),
+                DateTimePicker::make('scheduled_at')
+                    ->label('Publish Date')
+                    ->minDate(now())
+                    ->closeOnDateSelection()
+                    ->native(false),
                 TextInput::make('title')
                     ->label('Title')
-                    ->required()
                     ->placeholder('Enter the title of the post')
-                    ->rules('string', 'max:255'),
-                TinyEditor::make('content'),
-                DatePicker::make('scheduled_at')
-                    ->label('Published At')
-                    ->required()
-                    ->rules('date'),
+                    ->rules('string', 'max:255')
+                    ->hidden(
+                        fn (Get $get) => $get('service_account_id') ? ServiceAccount::find($get('service_account_id'))->socialMediaService()->first()->socialMediaType()->first()->type === 'linkedin' : true
+                    )
+                    ->required(
+                        fn (Get $get) => $get('service_account_id') ? ServiceAccount::find($get('service_account_id'))->socialMediaService()->first()->socialMediaType()->first()->type !== 'linkedin' : false
+                    ),
+                RichEditor::make('content')
+                    ->label('Content')
+                    ->placeholder('Enter the content of the post')
+                    ->columnSpanFull()
+                    ->disableToolbarButtons([])
+                    ->rules('string')
+                    ->hidden(
+                        fn (Get $get) => $get('service_account_id') ? ServiceAccount::find($get('service_account_id'))->socialMediaService()->first()->socialMediaType()->first()->type === 'linkedin' : true
+                    )
+                    ->required(
+                        fn (Get $get) => $get('service_account_id') ? ServiceAccount::find($get('service_account_id'))->socialMediaService()->first()->socialMediaType()->first()->type !== 'linkedin' : false
+                    ),
+                Textarea::make('content')
+                    ->label('Content')
+                    ->placeholder('Enter the content of the post')
+                    ->columnSpanFull()
+                    ->rules('string')
+                    ->hidden(
+                        fn (Get $get) => $get('service_account_id') ? ServiceAccount::find($get('service_account_id'))->socialMediaService()->first()->socialMediaType()->first()->type !== 'linkedin' : true
+                    )
+                    ->required(
+                        fn (Get $get) => $get('service_account_id') ? ServiceAccount::find($get('service_account_id'))->socialMediaService()->first()->socialMediaType()->first()->type === 'linkedin' : false
+                    )
             ]);
     }
 
@@ -65,22 +103,32 @@ class PostResource extends Resource
                     ->sortable(),
                 TextColumn::make('content')
                     ->label('Content')
-                    ->description(fn (Post $record): string => $record->title ? $record->title : null, 'above')
+                    ->description(fn (Post $record): string => $record->title ? $record->title : '', 'above')
                     ->wrap()
                     ->lineClamp(3)
                     ->searchable()
                     ->sortable(),
-                // IconColumn::make('socialMediaService.type')
-                //     ->icon(fn (string $state): string => match ($state) {
-                //         'linkedin' => 'fab-linkedin'
-                //     })
-                //     ->label('Account')
-                //     ->searchable()
-                //     ->sortable(),
+                IconColumn::make('serviceAccount.socialMediaService.socialMediaType.type')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'linkedin' => 'fab-linkedin',
+                        'steam' => 'fab-steam',
+                        'wakatime' => 'fab-wakatime',
+                    })
+                    ->label('Service')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('user.name')
                     ->label('Author')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 // Filter::make('drafts')

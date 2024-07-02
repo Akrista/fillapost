@@ -9,6 +9,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditSocialMediaService extends EditRecord
 {
     protected static string $resource = SocialMediaServiceResource::class;
+    protected ?string $heading = 'Edit Service';
 
     protected function getHeaderActions(): array
     {

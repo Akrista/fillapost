@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewSocialMediaService extends ViewRecord
 {
     protected static string $resource = SocialMediaServiceResource::class;
+    protected ?string $heading = 'View Service';
 
     protected function getHeaderActions(): array
     {

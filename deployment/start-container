@@ -15,6 +15,8 @@ initialStuff() {
 
     php artisan storage:link; \
     php artisan optimize:clear; \
+    php artisan icons:cache; \
+    php artisan filament:cache-components; \
     php artisan event:cache; \
     php artisan config:cache; \
     php artisan route:cache;

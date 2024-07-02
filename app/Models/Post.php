@@ -14,6 +14,7 @@ class Post extends Model
         'title',
         'content',
         'status',
+        'internal_id',
         'scheduled_at',
         'published_at',
         'user_id',

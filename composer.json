@@ -13,7 +13,6 @@
         "laravel/octane": "^2.4",
         "laravel/tinker": "^2.9",
         "leandrocfe/filament-apex-charts": "^3.1",
-        "mohamedsabil83/filament-forms-tinyeditor": "^2.3",
         "owenvoke/blade-fontawesome": "^2.6",
         "pxlrbt/filament-spotlight": "^1.2",
         "saade/filament-fullcalendar": "^3.2",

@@ -18,8 +18,11 @@ class SocialMediaServiceFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => 'linkedin',
+            'social_media_type_id' => 1,
+            'name' => $this->faker->name,
             'token' => Hash::make('password'),
+            'client_id' => Hash::make('password'),
+            'client_secret' => Hash::make('password'),
             'user_id' => 1
         ];
     }

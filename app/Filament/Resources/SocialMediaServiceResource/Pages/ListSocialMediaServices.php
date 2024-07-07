@@ -14,7 +14,8 @@ class ListSocialMediaServices extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Register Service'),
+            Actions\CreateAction::make()
+                ->label('Register Service'),
         ];
     }
 }

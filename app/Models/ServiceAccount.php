@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ServiceAccount extends Model
+class ServiceAccount extends Model implements HasAvatar
 {
     use HasFactory;
 
@@ -17,6 +18,11 @@ class ServiceAccount extends Model
         'avatar',
         'internal_id',
     ];
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar;
+    }
 
     public function user(): BelongsTo
     {

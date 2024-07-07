@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\HealthCheckResults;
 use App\Filament\Resources\PostResource;
 use App\Filament\Resources\ServiceAccountResource;
@@ -19,7 +18,6 @@ use pxlrbt\FilamentSpotlight\SpotlightPlugin;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationGroup;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -37,26 +35,26 @@ class AdminPanelProvider extends PanelProvider
             ->id('fillapost')
             ->path('/')
             ->login()
+            ->profile()
+            ->sidebarCollapsibleOnDesktop()
+            ->breadcrumbs(false)
+            ->favicon(asset('favicon.svg'))
+            ->brandName('Fillapost')
+            ->viteTheme('resources/css/filament/fillapost/theme.css')
             ->colors([
                 'primary' => Color::Red,
             ])
-            ->viteTheme('resources/css/filament/fillapost/theme.css')
-            ->breadcrumbs(false)
-            ->brandName('Fillapost')
-            ->favicon(asset('favicon.svg'))
+            ->pages([])
+            ->navigationItems([
+                NavigationItem::make('Create Post')
+                    ->icon('heroicon-o-plus-circle')
+                    ->sort(1),
+            ])
             ->resources([
                 PostResource::class,
                 SocialMediaServiceResource::class,
                 ServiceAccountResource::class,
                 config('filament-logger.activity_resource'),
-            ])
-            ->pages([
-                Dashboard::class,
-            ])
-            ->navigationItems([
-                NavigationItem::make('Create Post')
-                    ->icon('heroicon-o-plus-circle')
-                    ->sort(1),
             ])
             ->navigationGroups([
                 NavigationGroup::make()
@@ -66,11 +64,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Settings')
                     ->collapsible(false)
             ])
-            ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+            ->authMiddleware([
+                Authenticate::class,
             ])
-            ->sidebarCollapsibleOnDesktop()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -82,9 +78,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
-            ->authMiddleware([
-                Authenticate::class,
-            ])->plugins([
+            ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()->usingPage(HealthCheckResults::class),
                 FilamentApexChartsPlugin::make(),
                 SpotlightPlugin::make(),

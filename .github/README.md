@@ -14,8 +14,26 @@ Fill-A-Post is a social media management tool that allows you to schedule posts 
 
 ## Installation
 
+### Docker
+
+-   Pull the image from Docker Hub
+    ```console
+    docker pull ghcr.io/akrista/fillapost:latest
+    ```
+-   Run the image
+    ```console
+    docker run -d -p 8000:8000 ghcr.io/akrista/fillapost:latest
+    ```
+
 ### Docker Compose
 
+### Build it yourself
+
+-   Clone the repository
+    ```console
+    git clone https://github.com/Akrista/fillapost
+    cd fillapost
+    ```
 -   Build the Image
     ```console
     docker-compose build
@@ -43,7 +61,7 @@ Fill-A-Post is a social media management tool that allows you to schedule posts 
 -   NPM
 -   Docker (Optional)
 
-_Note: For Windows Users you could use directly [Laravel Herd](https://herd.laravel.com/windows)_
+_Note: You could directly use [Laravel Herd](https://herd.laravel.com/windows)_ as it has all the prerequisites installed.
 
 #### Steps
 
@@ -101,6 +119,9 @@ _Note: For Windows Users you could use directly [Laravel Herd](https://herd.lara
         -   [ ] Migrations should be run automatically
         -   [x] Dockerfile
         -   [x] Docker Compose
+        -   [ ] Build Image on Github Actions
+            -   [ ] Add a badge
+            -   [ ] Add a release
     -   [ ] Posts
         -   [ ] Add scheduling
         -   [ ] Posting should use base Linkedin API

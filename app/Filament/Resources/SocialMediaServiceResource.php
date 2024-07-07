@@ -48,11 +48,17 @@ class SocialMediaServiceResource extends Resource
                     ->required()
                     ->maxLength(255),
                 TextInput::make('token')
+                    ->password()
+                    ->revealable()
                     ->required(),
                 TextInput::make('client_id')
+                    ->password()
+                    ->revealable()
                     ->hidden(fn (Get $get) => $get('social_media_type_id') !== '1')
                     ->required(fn (Get $get) => $get('social_media_type_id') === '1'),
                 TextInput::make('client_secret')
+                    ->password()
+                    ->revealable()
                     ->hidden(fn (Get $get) => $get('social_media_type_id') !== '1')
                     ->required(fn (Get $get) => $get('social_media_type_id') === '1'),
             ]);

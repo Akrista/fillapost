@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServiceAccountResource\Pages;
 use App\Models\ServiceAccount;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -26,7 +28,15 @@ class ServiceAccountResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([]);
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('internal_id')
+                    ->required()
+                    ->maxLength(255),
+                FileUpload::make('avatar'),
+            ]);
     }
 
     public static function table(Table $table): Table
